@@ -11,7 +11,8 @@ exports.register = (req, res) => {
     customerModel.register(req).then((result)=>{
         if(result.success===true){
             res.json(result);
-            res.redirect('./login');
+            console.log('controller op');
+            // res.redirect('./login');
         }
         else{
             res.json(result);
@@ -32,8 +33,16 @@ exports.login = (req, res) => {
             res.json(result);
         }
         else{
+            console.log('else part');
             res.json(result);
-            res.redirect('./login');
+            //res.redirect('./login');
         }
+    })
+}
+
+exports.searchFlight = (req,res) => {
+    console.log('searchflight is working');
+    customerModel.searchFlight(req).then((result)=>{
+        
     })
 }
