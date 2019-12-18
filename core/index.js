@@ -44,18 +44,21 @@ async function loginUser(req) {
     
         console.log('inside promise in index.js')
 
-        let sql = `SELECT * FROM user WHERE email='${req.body.email}'`;
+        let sql = `SELECT password FROM user WHERE email='${req.body.email}'`;
         db.query(sql, (err, result) => {
+            console.log('result pwd: ', result[0]['password']);
             if (err || result.length == 0) {
                 console.log('error: ', err);
                 // json_response['token'] = ''
                 reject(json_response);
             }
             else {
-                const hashedPwd = `SELECT password FROM user WHERE email='${req.body.email}'`;
-                bcrypt.compare(req.body.password, hashedPwd, (err, res) => {
+                //const hashedPwd = `SELECT password FROM user WHERE email='${req.body.email}'`;
+                bcrypt.compare(req.body.password, result[0]['password'], (err, res) => {
+                   // console.log('email: ',req.body.email,'res: ',result[0]['password']);
+
                     if (err) {
-                        console.log('an error occured');
+                        console.log('an error occured: ', err);
                         // json_response['success'] = false;
                         // json_response['message'] = 'an error occured in databasse';
                         // json_response['token'] = ''
