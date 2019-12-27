@@ -6,5 +6,4 @@ exports.configRoutes = (app) => {
     app.post('/login',[customerController.login]);
     app.post('/search_flight',[customerController.searchFlight]);
     app.post('/addPassengers',[customerController.addPassengers]);
-    //app.post('/seatBook',[customerController.seatBook]);
 }

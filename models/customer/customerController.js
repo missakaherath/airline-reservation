@@ -49,9 +49,3 @@ exports.addPassengers = (req,res) => {
         res.json(result);
     })
 }
-
-// exports.seatBook = (req, res)=>{
-//     customerModel.seatBook(req).then((result)=>{
-//         res.json(result);
-//     })
-// }
