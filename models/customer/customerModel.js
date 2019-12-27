@@ -171,3 +171,37 @@ exports.addPassengers = async(req) => {
     console.log(result);
     return result;
 }
+
+exports.availableSeats = async(req) => {
+    async function availableSeats(req){
+        return promise = new Promise((resolve,reject)=>{
+        let schedule_ID = req.body.schedule_ID;
+        let class_ID = req.body.class_ID;
+        let sql = `SELECT seat_number FROM seat WHERE status=0 AND class_ID='${class_ID}' AND plane_ID=(SELECT plane_ID FROM plane_flight WHERE flight_ID=(SELECT flight_ID FROM schedule WHERE schedule_ID='${schedule_ID}'));`
+        db.query(sql,(err,result)=>{
+            if(err){
+                console.log('an err has been occured');
+                reject(json_response);
+            }
+            else{
+                console.log(result[0]['seat_number']);
+                var i;
+                for(i=0;i<result.length;i++){
+                    json_response['data'].push(result[i]['seat_number']);
+                    console.log(json_response);
+                }
+                resolve(json_response);
+            }
+        })
+        }).then(()=>{
+            json_response['success'] = true;
+            return json_response;
+        }).catch(()=>{
+            json_response['success'] = false;
+            return json_response;
+        })
+    }
+    let result = await availableSeats(req);
+    console.log('result: ',result);
+    return result;
+}

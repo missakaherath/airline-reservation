@@ -12,8 +12,7 @@ exports.register = (req, res) => {
             console.log('controller op');
         }
         else{
-            res.json(result);
-            res.redirect('./register');
+            res.json(result);   
         }
     })
 }
@@ -46,6 +45,11 @@ exports.searchFlight = (req,res) => {
 
 exports.addPassengers = (req,res) => {
     customerModel.addPassengers(req).then((result)=>{
+        res.json(result);
+    })
+}
+exports.availableSeats = (req,res) => {
+    customerModel.availableSeats(req).then((result)=>{
         res.json(result);
     })
 }
