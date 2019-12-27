@@ -175,6 +175,7 @@ exports.addPassengers = async(req) => {
 exports.availableSeats = async(req) => {
     async function availableSeats(req){
         return promise = new Promise((resolve,reject)=>{
+        json_response['data']=[];
         let schedule_ID = req.body.schedule_ID;
         let class_ID = req.body.class_ID;
         let sql = `SELECT seat_number FROM seat WHERE status=0 AND class_ID='${class_ID}' AND plane_ID=(SELECT plane_ID FROM plane_flight WHERE flight_ID=(SELECT flight_ID FROM schedule WHERE schedule_ID='${schedule_ID}'));`
@@ -195,6 +196,7 @@ exports.availableSeats = async(req) => {
         })
         }).then(()=>{
             json_response['success'] = true;
+            json_response['message'] = "following array contains the available seats of the requested plane";
             return json_response;
         }).catch(()=>{
             json_response['success'] = false;
