@@ -1,4 +1,3 @@
-const model = require('../../core/index');
 const db = require('../../core/db_connection');
 const fs = require('fs');
 const path = require('path');
