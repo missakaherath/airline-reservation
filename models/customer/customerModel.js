@@ -38,7 +38,7 @@ exports.register = async (req) => {
     return result;
 }
 
-exports.login = async(req) => {
+exports.login = async(req) => { //air port name  + id should be added to the respond
     async function loginUser(req) {
         console.log('inside login user in index.js')
         return promise = new Promise((resolve, reject) => {  
@@ -59,6 +59,24 @@ exports.login = async(req) => {
                         else if (res) {
                             console.log('correct password');
                             resolve(json_response);
+
+                            //inserting airport ids and names into data array in json response
+                            let sql = `SELECT airport_ID, airport_code FROM airport`;
+                            db.query(sql,(err,result)=>{
+                                if(err){
+                                    console.log('an error occured');
+                                }
+                                else{
+                                    console.log(result);
+                                    for(i=0;i<result.length;i++){
+                                        temp=[];
+                                        temp.push(result[i]['airport_ID'],result[i]['airport_code']);
+                                        json_response.data.push(temp);
+                                        console.log(result[i]['airport_ID'],result[i]['airport_code']);
+                                    }
+                                }
+                            })
+
                         }
                         else {
                             console.log('incorrect password');
@@ -69,10 +87,28 @@ exports.login = async(req) => {
                 }
             })
         }).then(() => {
-            json_response['success'] = true;
-            json_response['message'] = 'you logged in';
-            console.log('inside then: ', json_response);
-            return json_response;
+            return promise = new Promise((resolve, reject) => {
+                json_response['success'] = true;
+                let sql = `SELECT user_ID FROM user WHERE email='${req.body.email}'`;
+                db.query(sql, (err,result)=>{
+                    console.log('inside query');
+                    if(err){
+                        json_response['user_id']="id not found";
+                        reject(json_response);
+                    }
+                    else{
+                        json_response['user_id']=result;
+                        resolve(json_response);
+                    }
+                });
+                json_response['message'] = 'you logged in';
+                console.log('inside then: ', json_response);
+                return json_response;
+            }).then(()=>{
+                return json_response;
+            }).catch(()=>{
+                return json_response;
+            });
         }).catch(() => {
             json_response['success'] = false;
             json_response['message'] = 'incorrect email or password';
@@ -110,6 +146,21 @@ exports.searchFlight = async(req) => {
             else{
                 //this part should be run inside a for loop, one itteration per a single plane id in previous o/p
                 let sql2 = `SELECT date,departure_time, arrival_time FROM schedule WHERE flight_ID = (SELECT flight.flight_ID FROM plane_flight LEFT JOIN flight ON plane_flight.flight_ID=flight.flight_ID WHERE plane_ID='${result[0]['plane_ID']}' AND departure='${departureAirport}' AND arrival='${arrivalAirport}')`;
+                let sql3 =`SELECT class_ID,class_name,price FROM class`;
+                db.query(sql3,(err,result)=>{
+                    if(err){
+                        console.log('an database error occured');
+                    }
+                    else{
+                        json_response['prices']=[];
+                        console.log(result);
+                        for(i=0;i<3;i++){
+                            pricesArr=[];
+                            pricesArr.push(result[i]['class_ID'],result[i]['class_name'],result[i]['price']);
+                            json_response['prices'].push(pricesArr);
+                        }
+                    }
+                })
                 db.query(sql2,(err,result2)=>{
                     console.log('result2: ',result2);
                     json_response['message'] = 'available schedule details are stored in the data array';
