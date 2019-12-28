@@ -4,7 +4,6 @@ const path = require('path');
 const bcrypt = require('bcryptjs')
 let json_response = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../response_format.json'), 'utf8'));
 
-
 exports.register = async (req) => {
     async function registerUser(req) {
         console.log('index.js');
@@ -38,7 +37,7 @@ exports.register = async (req) => {
     return result;
 }
 
-exports.login = async(req) => { //air port name  + id should be added to the respond
+exports.login = async(req) => { 
     async function loginUser(req) {
         console.log('inside login user in index.js')
         return promise = new Promise((resolve, reject) => {  
@@ -123,7 +122,6 @@ exports.login = async(req) => { //air port name  + id should be added to the res
 }
 
 exports.searchFlight = async(req) => {
-
     async function searchFlight(req){
         return promise = new Promise((resolve,reject)=>{
         let departureAirport = req.body.departureAirport;
@@ -134,6 +132,12 @@ exports.searchFlight = async(req) => {
         console.log('inside index.js-searchFlight');
         let sql = `SELECT COUNT(class_ID),plane_ID FROM seat WHERE plane_ID = (SELECT plane_ID FROM vwplaneidbyschedule WHERE departure='${departureAirport}' AND arrival='${arrivalAirport}' AND date='${departureDate}') AND class_ID='${requiredClass}' AND status=0 GROUP BY plane_ID;`;
         db.query(sql,(err,result)=>{
+            if(err || result.length==0){
+                console.log('no schedules available');
+                json_response['message'] = 'no schedules are available';
+                resolve(json_response);
+            }
+            else{
             console.log('result: ',result);
             console.log('plane id: ',result[0]['plane_ID']);
             let availableSeats = result[0]['COUNT(class_ID)'];
@@ -162,17 +166,18 @@ exports.searchFlight = async(req) => {
                     }
                 })
                 db.query(sql2,(err,result2)=>{
+                    for(i=0;i<result2.length;i++){
+                        availableSchedules=[];
+                        availableSchedules.push(result[i]['plane_ID'],result2[i]['date'].toISOString().slice(0,10).replace(/T/, ' '),result2[i]['departure_time'],result2[i]['arrival_time']);
+                        json_response['data'].push(availableSchedules);
+                    }
                     console.log('result2: ',result2);
                     json_response['message'] = 'available schedule details are stored in the data array';
-                    json_response['data'].push(result[0]['plane_ID']);
-                    json_response['data'].push(result2[0]['date'].toISOString().slice(0,10).replace(/T/, ' '));
-                    json_response['data'].push(result2[0]['departure_time']);
-                    json_response['data'].push(result2[0]['arrival_time']);
                     console.log(json_response);
                     resolve(json_response);
                 })
             }
-        })
+        }})
         }).then(()=>{
             json_response['success'] = true;
             return json_response;
