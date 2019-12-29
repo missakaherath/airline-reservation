@@ -166,6 +166,7 @@ exports.searchFlight = async(req) => {
                     }
                 })
                 db.query(sql2,(err,result2)=>{
+                    json_response['data']=[];
                     console.log('result2 : ',result2);
                     for(i=0;i<result2.length;i++){
                         availableSchedules=[];
