@@ -218,22 +218,27 @@ exports.addPassengers = async(req) => {
     async function addPassengers(req){
         return promise = new Promise((resolve,reject)=>{
             //this should be updated
+            let numOfPassengeres = req.body.passengerArr.length;
             let user_ID = req.body.user_ID;
-            let passport_no = req.body.passport_no;
-            let age = req.body.age;
-            let first_name = req.body.first_name;
-            let last_name = req.body.last_name;
-            let sql = `INSERT INTO passenger (user_ID,first_name,last_name,passport_no,age) VALUES ('${user_ID}','${first_name}','${last_name}','${passport_no}','${age}')`;
-            db.query(sql,(err,result)=>{
-                if(err){
-                    json_response['message'] = 'couldnt add passenger to the db';
-                    reject(json_response);
-                }
-                else{
-                    json_response['message'] = 'passenger added to the db';
-                    resolve(json_response);
-                }
-            })
+            for(i=0;i<req.body.passengerArr.length;i++){
+                let first_name = req.body.passengerArr[i][0];
+                let last_name = req.body.passengerArr[i][1];
+                let passport_no = req.body.passengerArr[i][2];
+                let age = req.body.passengerArr[i][3];
+                let seat_number = req.body.passengerArr[i][4];
+                let sql = `INSERT INTO passenger (user_ID,first_name,last_name,passport_no,age,seat_number) VALUES ('${user_ID}','${first_name}','${last_name}','${passport_no}','${age}','${seat_number}')`;
+                    db.query(sql,(err,result)=>{
+                        if(err){
+                            console.log('error inserting data');
+                            json_response['message'] = 'couldnt add passenger to the db';
+                            reject(json_response);
+                        }
+                        else{
+                            json_response['message'] = 'passenger added to the db';
+                            resolve(json_response);
+                        }
+                    })
+            }
             }).then(()=>{
                 json_response['success'] = true;
                 return json_response;
