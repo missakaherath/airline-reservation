@@ -129,7 +129,26 @@ exports.searchFlight = async(req) => {
         let departureDate = req.body.departureDate;
         let passengers = req.body.passengers;
         let requiredClass = req.body.requiredClass;
-        console.log('inside index.js-searchFlight');
+        let sqlDep = `SELECT airport_code FROM airport WHERE airport_ID='${departureAirport}'`;
+        db.query(sqlDep,(err,result)=>{
+            if(err){
+                console.log('error finding departure airport');
+            }
+            else{
+                console.log('departure: ',result);
+                json_response['departure'] = result[0]['airport_code'];
+            }
+        })
+        let sqlArrival = `SELECT airport_code FROM airport WHERE airport_ID='${arrivalAirport}'`;
+        db.query(sqlArrival,(err,result)=>{
+            if(err){
+                console.log('error finding arrival airport');
+            }
+            else{
+                console.log('arrival: ',result);
+                json_response['arrival'] = result[0]['airport_code'];
+            }
+        })
         let sql = `SELECT COUNT(class_ID),plane_ID FROM seat WHERE plane_ID = (SELECT plane_ID FROM vwplaneidbyschedule WHERE departure='${departureAirport}' AND arrival='${arrivalAirport}' AND date='${departureDate}') AND class_ID='${requiredClass}' AND status=0 GROUP BY plane_ID;`;
         db.query(sql,(err,result)=>{
             if(err || result.length==0){
