@@ -76,7 +76,6 @@ exports.login = async(req) => {
                                     }
                                 }
                             })
-
                         }
                         else {
                             console.log('incorrect password');
@@ -150,7 +149,7 @@ exports.searchFlight = async(req) => {
             }
             else{
                 //this part should be run inside a for loop, one itteration per a single plane id in previous o/p
-                let sql2 = `SELECT date,departure_time, arrival_time FROM schedule WHERE flight_ID = (SELECT flight.flight_ID FROM plane_flight LEFT JOIN flight ON plane_flight.flight_ID=flight.flight_ID WHERE plane_ID='${result[0]['plane_ID']}' AND departure='${departureAirport}' AND arrival='${arrivalAirport}')`;
+                let sql2 = `SELECT schedule_ID,date,departure_time, arrival_time FROM schedule WHERE flight_ID = (SELECT flight.flight_ID FROM plane_flight LEFT JOIN flight ON plane_flight.flight_ID=flight.flight_ID WHERE plane_ID='${result[0]['plane_ID']}' AND departure='${departureAirport}' AND arrival='${arrivalAirport}')`;
                 let sql3 =`SELECT class_ID,class_name,price FROM class`;
                 db.query(sql3,(err,result)=>{
                     if(err){
@@ -167,9 +166,10 @@ exports.searchFlight = async(req) => {
                     }
                 })
                 db.query(sql2,(err,result2)=>{
+                    console.log('result2 : ',result2);
                     for(i=0;i<result2.length;i++){
                         availableSchedules=[];
-                        availableSchedules.push(result[i]['plane_ID'],result2[i]['date'].toISOString().slice(0,10).replace(/T/, ' '),result2[i]['departure_time'],result2[i]['arrival_time']);
+                        availableSchedules.push(result2[i]['schedule_ID'],result[i]['plane_ID'],result2[i]['date'].toISOString().slice(0,10).replace(/T/, ' '),result2[i]['departure_time'],result2[i]['arrival_time']);
                         json_response['data'].push(availableSchedules);
                     }
                     console.log('result2: ',result2);
