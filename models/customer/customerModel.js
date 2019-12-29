@@ -62,6 +62,7 @@ exports.login = async(req) => {
                             //inserting airport ids and names into data array in json response
                             let sql = `SELECT airport_ID, airport_code FROM airport`;
                             db.query(sql,(err,result)=>{
+                                json_response.data=[];
                                 if(err){
                                     console.log('an error occured');
                                 }
