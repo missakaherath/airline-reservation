@@ -7,6 +7,11 @@ exports.configRoutes = (app) => {
     app.post('/search_flight',verifyToken,[customerController.searchFlight]);
     app.post('/addPassengers',verifyToken,[customerController.addPassengers]);
     app.post('/availableSeats',verifyToken,[customerController.availableSeats]);
+    app.post('/receiveAirport',verifyToken,[customerController.receiveAirport]);
+    app.post('/getAirports',verifyToken,[customerController.getAirports]);
+    app.post('/changeSeat',verifyToken,[customerController.changeSeat]);
+    app.post('/removeReservation',verifyToken,[customerController.removeReservation]);
+    app.post('/editBook',verifyToken,[customerController.editBook]);
 }
 
 //verify token

@@ -53,9 +53,22 @@ exports.searchFlight = (req,res) => {
 exports.addPassengers = (req,res) => {
     jwt.verify(req.token,config.secret,(err,authData)=>{
         if(err){
+            console.log('error: ',err);
             res.sendStatus(403);
         } else {
             customerModel.addPassengers(req).then((result)=>{
+                res.json(result);
+            })
+        }
+    })
+}
+
+exports.receiveAirport = (req,res) => {
+    jwt.verify(req.token,config.secret,(err,authData)=>{
+        if(err){
+            res.sendStatus(403);
+        } else {
+            customerModel.receiveAirport(req).then((result)=>{
                 res.json(result);
             })
         }
@@ -68,6 +81,55 @@ exports.availableSeats = (req,res) => {
             res.sendStatus(403);
         } else {
             customerModel.availableSeats(req).then((result)=>{
+            res.json(result);
+    })
+        }
+    })
+}
+
+exports.getAirports = (req,res) => {
+    jwt.verify(req.token,config.secret,(err,authData)=>{
+        if(err){
+            res.sendStatus(403);
+        } else {
+                customerModel.getAirports(req).then((result)=>{
+                    res.json(result);
+                })          
+        }
+    })
+}
+
+exports.changeSeat = (req,res) => { //send all available seats when plane id and class id given in the req
+    jwt.verify(req.token,config.secret,(err,authData)=>{
+        if(err){
+            res.sendStatus(403);
+        } else {
+            customerModel.changeSeat(req).then((result)=>{
+                res.json(result);
+            })
+        }
+    })
+}
+
+exports.removeReservation = (req,res) => { //remove a reservation
+    jwt.verify(req.token,config.secret,(err,authData)=>{
+        if(err){
+            res.sendStatus(403);
+        }
+        else {
+            customerModel.removeReservation(req).then((result)=>{
+                res.json(result);
+            })
+        }
+    })
+}
+
+exports.editBook = (req,res) => {
+    jwt.verify(req.token,config.secret,(err,authData)=>{
+        if(err){
+            res.sendStatus(403);
+        } else {
+            customerModel.editBook(req).then((result)=>{
                 res.json(result);
             })
         }
